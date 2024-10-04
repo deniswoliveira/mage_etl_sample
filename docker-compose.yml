@@ -1,0 +1,58 @@
+services:
+  magic:
+    image: mageai/mageai:latest
+    command: mage start ${PROJECT_NAME}
+    env_file:
+      - .env
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      USER_CODE_PATH: /home/src/${PROJECT_NAME}
+      ENV: ${ENV}
+    ports:
+      - 6789:6789
+    volumes:
+      - .:/home/src/
+    restart: on-failure:5
+    networks:
+      - my_network
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: mssql
+    user: mssql
+    env_file:
+      - .env    
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${SA_PASSWORD}
+    ports:
+      - 1433:1433
+    restart: always
+    networks:
+      - my_network
+    healthcheck:
+      test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-S", "mssql", "-U", "sa", "-C" ,"-P", "${SA_PASSWORD}", "-Q", "SELECT 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  mssqltools:
+    image: mcr.microsoft.com/mssql-tools
+    depends_on:
+      mssql:
+        condition: service_healthy
+    volumes:
+      - ./init/mage.sql:/tmp/mage.sql
+      - ./init/init_mage_database.sh:/tmp/init_mage_database.sh
+    command: /bin/bash -c "/tmp/init_mage_database.sh"
+    networks:
+      - my_network    
+ 
+
+networks:
+  my_network:
+    driver: bridge
+
+
+  

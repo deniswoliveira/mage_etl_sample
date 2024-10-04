@@ -1,0 +1,19 @@
+CREATE LOGIN eng WITH PASSWORD = 'Complex@1234';
+ALTER SERVER ROLE sysadmin ADD MEMBER eng;
+
+CREATE DATABASE eng_mago;
+GO
+
+USE eng_mago;
+GO
+
+CREATE SCHEMA Sales;
+GO
+
+CREATE TABLE Sales.Orders ( 
+    OrderID INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
+    CustomerName NVARCHAR(100) NOT NULL,   
+    OrderDate DATETIME NOT NULL DEFAULT GETDATE(),  
+    TotalAmount DECIMAL(10, 2) NOT NULL 
+);
+GO
