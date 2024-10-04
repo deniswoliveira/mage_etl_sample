@@ -1,0 +1,8 @@
+  # MSSQL
+  MSSQL_DATABASE: eng_mago
+  MSSQL_SCHEMA: Sales
+  MSSQL_DRIVER: "ODBC Driver 18 for SQL Server"
+  MSSQL_HOST: mssql
+  MSSQL_PASSWORD: Complex@1234
+  MSSQL_PORT: 1433
+  MSSQL_USER: eng
